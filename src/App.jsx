@@ -11,70 +11,64 @@ const questions = [
   {
     id: "year",
     type: "single",
-    q: "What year are you studying?",
-    am: "የትኛው ዓመት ነዎት?",
+    q: "What is your year of study?",
+    am: "ስንተኛ ዓመት ነዎት?",
     options: ["1st year", "2nd year", "3rd year", "4th year", "Graduate"],
   },
   {
-    id: "living",
-    type: "single",
-    q: "Where do you live?",
-    am: "የት እንደምትኖሩ?",
-    options: ["On-campus", "Off-campus"],
-  },
-  {
     id: "freq",
-    type: "single",
-    q: "How often do you go outside campus per week?",
-    am: "እባክዎ በሳምንት ስንት ጊዜ እየወጡ ነው?",
-    options: ["Never", "1-2 times", "3-4 times", "5+ times"],
+    type: "freq",
+    q: "How often do you go outside campus?",
+    am: "በሳምንት ስንት ጊዜ ከካምፓስ ውጭ ይወጣሉ?",
+    globalOptions: ["Never"],
+    groups: [
+      {
+        id: 'week',
+        label: 'Per week',
+        am: 'በሳምንት',
+        options: ['1-2 times','3-4 times','5+ times']
+      },
+      {
+        id: 'month',
+        label: 'Per month',
+        am: 'በወር',
+        options: ['Once a month','2-3 times a month','4+ times a month']
+      }
+    ]
   },
   {
     id: "where",
     type: "multi",
-    q: "Where do you usually go? (pick any)",
-    am: "የተለመዱት የምትሄዱበት ቦታ የት ነው?",
+    q: "Where do you usually go? (Select all that apply)",
+    am: "ብዙ ጊዜ የሚሄዱት የት ነው? (ከብዙ ምርጫ ይምረጡ)",
     options: [
-      "Cafés",
-      "Restaurants",
-      "Juice houses",
-      "Shops",
-      "Entertainment",
-      "Libraries",
-      "Other",
+      "Cafés ☕",
+      "Restaurants 🍽",
+      "Juice houses 🥤",
+      "Shops 🛍",
+      "Entertainment 🎮",
+      "Other (please specify) — ሌላ (ይጻፉ)",
     ],
-  },
-  {
-    id: "reason",
-    type: "single",
-    q: "What is the main reason you go out?",
-    am: "ዋናው ምክንያት ምንድን ነው?",
-    options: [
-      "Food/Drink",
-      "Study/Group work",
-      "Socializing",
-      "Shopping",
-      "Entertainment",
-      "Other",
-    ],
-  },
-  {
-    id: "spend",
-    type: "composite",
-    q: "How much do you usually spend per visit?",
-    am: "በእያንዳንዱ ጉብኝት እስከምን ያክላሉ?",
   },
   {
     id: "business",
     type: "business",
-    q: "Which place do you visit the MOST?",
-    am: "የብዙ ጊዜ የምትጎብኙት ቦታ የት ነው?",
+    q: "Which exact place do you visit the MOST?",
+    am: "ብዙ ጊዜ የሚሄዱበት ቦታ ምንድን ነው?",
+  },
+  {
+    id: "spend",
+    type: "single",
+    q: "How much do you usually spend per visit?",
+    am: "በአንድ ጊዜ ስንት ብር ይወጣሉ?",
+    options: ["Less than 50 birr", "50 – 100 birr", "100 – 200 birr", "More than 200 birr"],
   },
 ];
 
 export default function App() {
   const [i, setI] = useState(-1); // -1 = intro
   const [answers, setAnswers] = useState({});
+  const [expandedFreqGroup, setExpandedFreqGroup] = useState(null);
   const stepCount = questions.length + 1;
 
   function setAnswer(key, val) {
@@ -95,7 +89,6 @@ export default function App() {
     } catch (e) {
       console.warn("submit failed", e);
     }
-    // fallback: show final and log
     console.log("Survey submission (local):", answers);
     setI(stepCount);
   }
@@ -114,15 +107,20 @@ export default function App() {
             <div className="question enter">
               <h2>Takes only 30 seconds ⏱</h2>
               <div className="amharic">ብዙ ጊዜ አይወስድም — የ30 ሰከንድ ጥያቄዎች</div>
-              <div className="small-note">
-                Almost done 👀 — quick and anonymous.
+
+              <p className="small-note" style={{ marginTop: 10 }}>
+                This survey is anonymous and only used for general research. Please answer based on your real experience. ✅
+              </p>
+              <div className="amharic" style={{ fontSize: 13, marginTop: 8, color: "#56606a" }}>
+                ይህ መረጃ ስም ሳይጠየቅ ለጠቅላላ ጥናት ብቻ ይጠቀማል። እባክዎ በእውነተኛ ልምድዎ መሠረት ይመልሱ።
               </div>
-              <button
-                className="btn primary"
-                style={{ marginTop: 16 }}
-                onClick={() => setI(0)}
-              >
-                Start Survey
+
+              <div className="small-note" style={{ marginTop: 12 }}>
+                Almost done 👀
+              </div>
+
+              <button className="btn primary" style={{ marginTop: 16 }} onClick={() => setI(0)}>
+                Start Survey 🚀
               </button>
             </div>
           </div>
@@ -136,15 +134,13 @@ export default function App() {
         <div className="card">
           <div className="question enter">
             <h2>🎉 You’re done! Thanks for helping improve student life.</h2>
-            <div className="amharic">
-              እስራሕ! አመሰግናለን — ለተማሪዎ ሕይወት ለማሻሻል ተማሪ ግምገማዎ ጠቃሚ ነው።
+            <div className="amharic">እስራሕ! አመሰግናለን — ለተማሪዎ ሕይወት ለማሻሻል ተማሪ ግምገማዎ ጠቃሚ ነው።</div>
+            <div style={{ marginTop: 10, fontWeight: 700 }}>Thank you for your time. 🙏</div>
+            <div className="amharic" style={{ marginTop: 4, color: "#56606a" }}>
+              ለጊዜዎ እናመሰግናለን። 🙏
             </div>
-            <div className="small-note">
-              We use this data to bring better student discounts 👀
-            </div>
-            <pre style={{ marginTop: 12, fontSize: 13 }}>
-              {JSON.stringify(answers, null, 2)}
-            </pre>
+            <div className="small-note">We use this data to bring better student discounts 👀</div>
+            <pre style={{ marginTop: 12, fontSize: 13 }}>{JSON.stringify(answers, null, 2)}</pre>
           </div>
         </div>
       </div>
@@ -186,50 +182,42 @@ export default function App() {
               </div>
             )}
 
-            {q.type === "multi" && (
-              <MultiSelect
-                q={q}
-                value={answers[q.id] || []}
-                onChange={(v) => setAnswer(q.id, v)}
-                onNext={() => setI((s) => s + 1)}
-              />
-            )}
-
-            {q.type === "composite" && (
+            {q.type === 'freq' && (
               <div>
-                <div className="options">
-                  {["< $1", "$1 - $3", "$3 - $6", "> $6"].map((r) => (
-                    <button
-                      key={r}
-                      className="option-button"
-                      onClick={() => {
-                        setAnswer("spend_per_visit", r);
-                        setI((s) => s + 1);
-                      }}
-                    >
-                      {r}
-                    </button>
+                <div style={{marginBottom:10}}>
+                  {q.globalOptions && q.globalOptions.map(g=> (
+                    <button key={g} className="option-button" style={{marginRight:8}} onClick={()=>{ setAnswer('freq',{period:'none',value:g}); setI(s=>s+1) }}>{g}</button>
                   ))}
                 </div>
-                <div style={{ marginTop: 14 }}>
-                  <div className="small-note">
-                    Or drag to pick an approximate amount (optional)
-                  </div>
-                  <input
-                    className="slider"
-                    type="range"
-                    min="0"
-                    max="100"
-                    onInput={(e) => setAnswer("spend_slider", e.target.value)}
-                  />
-                  <input
-                    className="input"
-                    placeholder="Weekly total spending (optional)"
-                    type="number"
-                    onChange={(e) => setAnswer("weekly_total", e.target.value)}
-                  />
+
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                  {q.groups.map((gr) => (
+                    <div key={gr.id} className="freq-group">
+                      <div className="group-header" onClick={() => setExpandedFreqGroup((cur) => (cur === gr.id ? null : gr.id))}>
+                        <div>
+                          <div style={{fontWeight:700}}>{gr.label}</div>
+                          <div className="amharic" style={{fontSize:13,marginTop:4}}>{gr.am}</div>
+                        </div>
+                        <div className={`chev ${expandedFreqGroup === gr.id ? 'expanded' : ''}`}>›</div>
+                      </div>
+
+                      {expandedFreqGroup === gr.id && (
+                        <div className="group-body">
+                          {gr.options.map((opt) => (
+                            <button key={opt} className="option-button" onClick={() => { setAnswer('freq', { period: gr.id, value: opt }); setI((s) => s + 1); }}>
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
+            )}
+
+            {q.type === "multi" && (
+              <MultiSelect q={q} value={answers[q.id] || []} onChange={(v) => setAnswer(q.id, v)} onNext={() => setI((s) => s + 1)} />
             )}
 
             {q.type === "business" && (
@@ -247,17 +235,12 @@ export default function App() {
         </div>
 
         <div className="controls">
-          <button
-            className="btn ghost"
-            onClick={() => setI((s) => Math.max(-1, s - 1))}
-            style={{ visibility: i === 0 ? "hidden" : "visible" }}
-          >
+          <button className="btn ghost" onClick={() => setI((s) => Math.max(-1, s - 1))} style={{ visibility: i === 0 ? "hidden" : "visible" }}>
             Back
           </button>
           <button
             className="btn primary"
             onClick={() => {
-              // if current is multi require selection
               if (q.type === "multi") {
                 if (!(answers[q.id] || []).length) {
                   alert("Please select at least one option");
@@ -292,26 +275,13 @@ function MultiSelect({ q, value, onChange, onNext }) {
     <div>
       <div className="options">
         {q.options.map((opt) => (
-          <button
-            key={opt}
-            className={`option-button ${sel.has(opt) ? "selected" : ""}`}
-            onClick={() => toggle(opt)}
-          >
+          <button key={opt} className={`option-button ${sel.has(opt) ? "selected" : ""}`} onClick={() => toggle(opt)}>
             {opt}
           </button>
         ))}
       </div>
-      {sel.has("Other") && (
-        <input
-          className="input"
-          placeholder="If Other, tell us which (optional)"
-          onChange={(e) =>
-            onChange([
-              ...Array.from(sel).filter((x) => x !== "Other"),
-              e.target.value,
-            ])
-          }
-        />
+      {sel.has("Other (please specify) — ሌላ (ይጻፉ)") && (
+        <input className="input" placeholder="If Other, tell us which (optional)" onChange={(e) => onChange([...Array.from(sel).filter((x) => !x.includes("Other")), e.target.value])} />
       )}
       <div className="small-note">Tap to select multiple. Then press Next.</div>
     </div>
@@ -324,40 +294,18 @@ function BusinessInput({ onChoose, onSetFreq }) {
     <div>
       <div className="chips">
         {suggestions.map((s) => (
-          <div
-            key={s}
-            className="chip"
-            onClick={() => {
-              setCustom("");
-              onChoose(s);
-            }}
-          >
+          <div key={s} className="chip" onClick={() => { setCustom(""); onChoose(s); }}>
             {s}
           </div>
         ))}
       </div>
       <div style={{ marginTop: 12 }}>
-        <input
-          className="input"
-          placeholder="e.g. Tomoca Coffee, Kaldi's, Local Juice House"
-          value={custom}
-          onChange={(e) => {
-            setCustom(e.target.value);
-            onChoose(e.target.value);
-          }}
-        />
+        <input className="input" placeholder="e.g. Tomoca Coffee, Kaldi's, Local Juice House" value={custom} onChange={(e) => { setCustom(e.target.value); onChoose(e.target.value); }} />
       </div>
       <div style={{ marginTop: 14 }}>
         <div className="small-note">How often do you go there?</div>
-        {["Daily", "Weekly", "Occasionally"].map((f) => (
-          <button
-            key={f}
-            className="option-button"
-            style={{ marginTop: 8 }}
-            onClick={() => onSetFreq(f)}
-          >
-            {f}
-          </button>
+        {['Daily','Weekly','Occasionally'].map((f) => (
+          <button key={f} className="option-button" style={{ marginTop: 8 }} onClick={() => onSetFreq(f)}>{f}</button>
         ))}
       </div>
     </div>
