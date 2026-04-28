@@ -4,7 +4,8 @@
   --card: #ffffff;
   --primary: #00a89b;
   --accent: #00e5c3;
-  --muted: #6b7280;
+  --muted: #486069;
+  --text-dark: #07252f;
   --radius: 14px;
 }
 * {
@@ -36,6 +37,9 @@ body {
   align-items: center;
   justify-content: center;
   padding: 28px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-dark);
 }
 .app {
   width: 100%;
@@ -45,7 +49,7 @@ body {
   background: var(--card);
   border-radius: 18px;
   box-shadow: 0 30px 60px rgba(6, 22, 45, 0.28);
-  padding: 22px;
+  padding: 12px 22px 22px 22px;
   min-height: 520px;
   display: flex;
   flex-direction: column;
@@ -100,29 +104,41 @@ body {
   transition: width 0.28s ease;
 }
 .step {
-  font-weight: 600;
-  color: var(--muted);
+  font-weight: 700;
+  color: var(--text-dark);
   font-size: 14px;
 }
 .question-area {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 .question {
   width: 100%;
 }
 .card h2 {
-  margin: 16px 0 8px 0;
-  font-size: 20px;
-  color: #062b3a;
+  margin: 10px 0 8px 0;
+  font-size: 22px;
+  color: var(--text-dark);
+  font-weight: 700;
 }
 .amharic {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   margin-bottom: 14px;
+  font-weight: 600;
+}
+
+/* Add 10px top margin to key typographic controls for spacing consistency */
+.amharic,
+.step,
+.small-note,
+.chip,
+.option-button,
+.input {
+  margin-top: 10px;
 }
 .options {
   display: grid;
@@ -135,10 +151,11 @@ body {
   background: #f8fbff;
   border: 1px solid rgba(90, 140, 255, 0.06);
   text-align: center;
-  font-weight: 600;
-  color: #153056;
+  font-weight: 700;
+  color: var(--text-dark);
   box-shadow: 0 6px 18px rgba(80, 110, 170, 0.03);
   cursor: pointer;
+  font-size: 15px;
 }
 .option-button.selected {
   background: linear-gradient(
@@ -199,16 +216,24 @@ body {
   color: var(--muted);
 }
 .small-note {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   margin-top: 10px;
+  font-weight: 600;
 }
 .input {
   width: 100%;
   padding: 12px;
   border-radius: 10px;
   border: 1px solid #e6eef8;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* textarea variant for larger feedback input */
+textarea.input {
+  min-height: 120px;
+  resize: vertical;
 }
 .chips {
   display: flex;
@@ -221,6 +246,7 @@ body {
   background: #f1f6ff;
   border: 1px solid rgba(90, 140, 255, 0.06);
   cursor: pointer;
+  font-weight: 700;
 }
 .chip.selected {
   background: var(--primary);
@@ -263,5 +289,41 @@ body {
   }
   .card {
     min-height: 520px;
+  }
+}
+
+/* Desktop / PC enhancements */
+@media (min-width: 900px) {
+  .app {
+    max-width: 960px;
+  }
+  .card {
+    padding: 32px;
+    min-height: 560px;
+  }
+  .question-area {
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .options {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .option-button {
+    padding: 16px 14px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .chips {
+    gap: 12px;
+  }
+  .card h2 {
+    font-size: 24px;
+  }
+  .question {
+    max-width: 640px;
+  }
+  .freq-group {
+    padding: 14px;
   }
 }

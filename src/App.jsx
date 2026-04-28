@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { supabase } from "./lib/supabaseClient";
 
 const suggestions = [
   "Tomoca Coffee",
@@ -68,6 +69,13 @@ const questions = [
       "More than 200 birr",
     ],
   },
+  {
+    id: "feedback",
+    type: "feedback",
+    q: "Do you have any ideas or suggestions to improve student life? (optional)",
+    am: "ለተማሪዎ ሕይወት ለማሻሻል ምንም ሃሳብ ወይም አስተያየት ካለዎት እባክዎን ይጻፉ።",
+    placeholder: "Your ideas or suggestions... — የእርስዎ ሃሳቦች ወይም አስተያየቶች...",
+  },
 ];
 
 export default function App() {
@@ -75,14 +83,31 @@ export default function App() {
   const [answers, setAnswers] = useState({});
   const [expandedFreqGroup, setExpandedFreqGroup] = useState(null);
   const stepCount = questions.length + 1;
+  const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://localhost:3000").replace(/\/$/, "");
+
+  useEffect(() => {
+    const qCurr = questions[i];
+    if (qCurr && qCurr.type === "freq") {
+      if (typeof window !== "undefined" && window.innerWidth >= 900) {
+        setExpandedFreqGroup(
+          qCurr.groups && qCurr.groups.length ? qCurr.groups[0].id : null,
+        );
+      } else {
+        setExpandedFreqGroup(null);
+      }
+    } else {
+      setExpandedFreqGroup(null);
+    }
+  }, [i]);
 
   function setAnswer(key, val) {
     setAnswers((a) => ({ ...a, [key]: val }));
   }
 
   async function submit() {
+    // Preferred: save through backend (service-role on server).
     try {
-      const res = await fetch("/api/survey", {
+      const res = await fetch(`${apiBase}/api/survey`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(answers),
@@ -91,9 +116,24 @@ export default function App() {
         setI(stepCount);
         return;
       }
-    } catch (e) {
-      console.warn("submit failed", e);
+    } catch (err) {
+      console.warn("server submit failed", err);
     }
+
+    // Fallback: direct RPC via Supabase anon client.
+    try {
+      const { data, error } = await supabase.rpc("insert_survey", {
+        payload: answers,
+      });
+      if (error) throw error;
+      console.log("saved id", data);
+      setI(stepCount);
+      return;
+    } catch (e) {
+      console.warn("Supabase RPC submit failed", e);
+    }
+
+    // Final fallback: log locally and finish.
     console.log("Survey submission (local):", answers);
     setI(stepCount);
   }
@@ -176,8 +216,8 @@ export default function App() {
           <div className="progress">
             <span style={{ width: `${Math.round((i / stepCount) * 100)}%` }} />
           </div>
-          <div className="step">
-            Step {i + 1} of {stepCount}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="step">Step {i + 1} of {stepCount}</div>
           </div>
         </div>
 
@@ -299,6 +339,18 @@ export default function App() {
                   setI((s) => s + 1);
                 }}
               />
+            )}
+
+            {q.type === "feedback" && (
+              <div>
+                <textarea
+                  className="input"
+                  placeholder={q.placeholder}
+                  value={answers[q.id] || ""}
+                  onChange={(e) => setAnswer(q.id, e.target.value)}
+                />
+                <div className="small-note">Optional — ነፃ ነው</div>
+              </div>
             )}
           </div>
         </div>
