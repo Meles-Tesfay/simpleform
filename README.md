@@ -13,11 +13,13 @@ npm install
 2. Run the Vite dev server and the mock backend in separate terminals
 
 Client (React + Vite):
+
 ```bash
 npm run dev
 ```
 
 Server (mock Express endpoint):
+
 ```bash
 npm run server
 ```
