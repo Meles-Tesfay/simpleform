@@ -1,5 +1,32 @@
 import React, { useMemo, useState } from "react";
 
+function parseAnswers(raw) {
+  if (!raw) return {};
+  if (typeof raw === "object") return raw;
+  if (typeof raw === "string") {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return {};
+    }
+  }
+  return {};
+}
+
+function formatFreq(freq) {
+  if (!freq) return "-";
+  if (typeof freq === "string") return freq;
+  const period = freq.period ? `${freq.period}: ` : "";
+  const value = freq.value || "";
+  return `${period}${value}`.trim() || "-";
+}
+
+function formatList(value) {
+  if (!value) return "-";
+  if (Array.isArray(value)) return value.filter(Boolean).join(", ") || "-";
+  return String(value);
+}
+
 export default function AdminPage() {
   const [secret, setSecret] = useState("");
   const [rows, setRows] = useState([]);
@@ -7,15 +34,34 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://localhost:3000").replace(/\/$/, "");
 
-  const total = rows.length;
+  const normalizedRows = useMemo(
+    () =>
+      rows.map((r) => {
+        const answers = parseAnswers(r?.answers);
+        return {
+          id: r?.id ?? "-",
+          createdAt: r?.created_at || r?.inserted_at || null,
+          year: answers.year || "-",
+          freq: formatFreq(answers.freq),
+          where: formatList(answers.where),
+          business: answers.business_name || "-",
+          businessFreq: answers.business_freq || "-",
+          spend: answers.spend || "-",
+          feedback: answers.feedback || "-",
+        };
+      }),
+    [rows],
+  );
+
+  const total = normalizedRows.length;
   const yearCounts = useMemo(() => {
     const map = new Map();
-    rows.forEach((r) => {
-      const key = r?.answers?.year || "Unknown";
+    normalizedRows.forEach((r) => {
+      const key = r.year || "Unknown";
       map.set(key, (map.get(key) || 0) + 1);
     });
     return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
-  }, [rows]);
+  }, [normalizedRows]);
 
   async function loadRows() {
     setLoading(true);
@@ -77,11 +123,38 @@ export default function AdminPage() {
                 ))}
               </ul>
             </div>
-            <div style={{ marginTop: 10 }}>
-              <strong>Latest raw rows (admin only):</strong>
-              <pre style={{ maxHeight: 260, overflow: "auto", fontSize: 12 }}>
-                {JSON.stringify(rows.slice(0, 20), null, 2)}
-              </pre>
+            <div style={{ marginTop: 14 }}>
+              <strong>Responses (organized)</strong>
+              <div style={{ overflowX: "auto", marginTop: 8 }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                  <thead>
+                    <tr>
+                      <th style={thStyle}>Date</th>
+                      <th style={thStyle}>Year</th>
+                      <th style={thStyle}>Frequency</th>
+                      <th style={thStyle}>Places</th>
+                      <th style={thStyle}>Business</th>
+                      <th style={thStyle}>Business Freq</th>
+                      <th style={thStyle}>Spend</th>
+                      <th style={thStyle}>Feedback</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {normalizedRows.slice(0, 200).map((r) => (
+                      <tr key={r.id}>
+                        <td style={tdStyle}>{r.createdAt ? new Date(r.createdAt).toLocaleString() : "-"}</td>
+                        <td style={tdStyle}>{r.year}</td>
+                        <td style={tdStyle}>{r.freq}</td>
+                        <td style={tdStyle}>{r.where}</td>
+                        <td style={tdStyle}>{r.business}</td>
+                        <td style={tdStyle}>{r.businessFreq}</td>
+                        <td style={tdStyle}>{r.spend}</td>
+                        <td style={{ ...tdStyle, maxWidth: 240 }}>{r.feedback}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         ) : null}
@@ -89,3 +162,19 @@ export default function AdminPage() {
     </div>
   );
 }
+
+const thStyle = {
+  textAlign: "left",
+  padding: "10px 8px",
+  borderBottom: "1px solid #dbe6f3",
+  color: "#21414f",
+  fontWeight: 700,
+  whiteSpace: "nowrap",
+};
+
+const tdStyle = {
+  padding: "10px 8px",
+  borderBottom: "1px solid #ecf1f7",
+  verticalAlign: "top",
+  color: "#163947",
+};

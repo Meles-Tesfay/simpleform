@@ -100,4 +100,19 @@ app.get("/api/admin/export", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Fallback server listening on ${PORT}`));
+const server = app.listen(PORT, () =>
+  console.log(`Fallback server listening on ${PORT}`),
+);
+
+server.on("error", (err) => {
+  if (err && err.code === "EADDRINUSE") {
+    console.error(
+      `Port ${PORT} is already in use. Another server is likely already running.`,
+    );
+    console.error(
+      "Stop the existing process or run with a different port, e.g. PORT=3001 npm run server",
+    );
+    process.exit(1);
+  }
+  throw err;
+});
