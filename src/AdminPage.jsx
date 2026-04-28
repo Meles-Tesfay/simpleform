@@ -32,7 +32,7 @@ export default function AdminPage() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://localhost:3000").replace(/\/$/, "");
+  const apiBase = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
   const normalizedRows = useMemo(
     () =>
@@ -77,7 +77,8 @@ export default function AdminPage() {
       setRows([]);
       const msg = err?.message || String(err);
       if (msg.includes("Failed to fetch")) {
-        setError(`Cannot reach backend at ${apiBase}. Start it with: npm run server`);
+        const baseLabel = apiBase || "same origin (/api)";
+        setError(`Cannot reach backend at ${baseLabel}. Start it with: npm run server`);
       } else {
         setError(msg);
       }

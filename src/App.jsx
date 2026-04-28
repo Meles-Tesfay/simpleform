@@ -78,7 +78,7 @@ export default function App() {
   const [answers, setAnswers] = useState({});
   const [expandedFreqGroup, setExpandedFreqGroup] = useState(null);
   const stepCount = questions.length + 1;
-  const apiBase = (import.meta.env.VITE_API_BASE_URL || "http://localhost:3000").replace(/\/$/, "");
+  const apiBase = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
   useEffect(() => {
     const qCurr = questions[i];
