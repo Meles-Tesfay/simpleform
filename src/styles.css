@@ -19,9 +19,9 @@ body,
 body {
   margin: 0;
   font-family:
-    Inter,
+    "Inter",
+    "Segoe UI",
     system-ui,
-    Segoe UI,
     Roboto,
     Helvetica,
     Arial,
@@ -37,8 +37,10 @@ body {
   align-items: center;
   justify-content: center;
   padding: 28px;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
   color: var(--text-dark);
 }
 .app {
@@ -49,7 +51,7 @@ body {
   background: var(--card);
   border-radius: 18px;
   box-shadow: 0 30px 60px rgba(6, 22, 45, 0.28);
-  padding: 12px 22px 22px 22px;
+  padding: 18px 22px 22px 22px;
   min-height: 520px;
   display: flex;
   flex-direction: column;
@@ -71,7 +73,7 @@ body {
   position: absolute;
   left: 0;
   top: 0;
-  height: 86px;
+  height: 64px;
   width: 100%;
   background: linear-gradient(90deg, var(--bg-start), var(--bg-end));
   border-top-left-radius: 18px;
@@ -104,31 +106,65 @@ body {
   transition: width 0.28s ease;
 }
 .step {
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-dark);
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: 0.02em;
 }
 .question-area {
   flex: 1;
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  margin-top: 12px;
+  background: #fff;
+  border-radius: 12px;
 }
 .question {
   width: 100%;
 }
+.done-screen {
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.done-icon-wrap {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 30%, #b6fff1, #43d8c9);
+  box-shadow: 0 14px 30px rgba(0, 168, 155, 0.25);
+  animation: popIn 0.5s ease-out, pulse 2s ease-in-out infinite 0.5s;
+}
+.done-icon {
+  font-size: 42px;
+  line-height: 1;
+  color: #0a5f5a;
+  font-weight: 700;
+}
+.done-title {
+  margin-top: 16px;
+}
 .card h2 {
   margin: 10px 0 8px 0;
-  font-size: 22px;
+  font-size: 24px;
+  line-height: 1.35;
   color: var(--text-dark);
-  font-weight: 700;
+  font-weight: 600;
 }
 .amharic {
   display: block;
   font-size: 14px;
-  color: var(--muted);
+  line-height: 1.5;
+  color: #3e5560;
   margin-bottom: 14px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Add 10px top margin to key typographic controls for spacing consistency */
@@ -151,11 +187,12 @@ body {
   background: #f8fbff;
   border: 1px solid rgba(90, 140, 255, 0.06);
   text-align: center;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-dark);
   box-shadow: 0 6px 18px rgba(80, 110, 170, 0.03);
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
+  line-height: 1.35;
 }
 .option-button.selected {
   background: linear-gradient(
@@ -203,7 +240,9 @@ body {
   padding: 12px 16px;
   border-radius: 12px;
   border: 0;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
 }
 .btn.primary {
@@ -216,8 +255,9 @@ body {
   color: var(--muted);
 }
 .small-note {
-  font-size: 14px;
-  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+  color: #21414f;
   margin-top: 10px;
   font-weight: 600;
 }
@@ -226,8 +266,9 @@ body {
   padding: 12px;
   border-radius: 10px;
   border: 1px solid #e6eef8;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 500;
 }
 
 /* textarea variant for larger feedback input */
@@ -246,7 +287,8 @@ textarea.input {
   background: #f1f6ff;
   border: 1px solid rgba(90, 140, 255, 0.06);
   cursor: pointer;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
 }
 .chip.selected {
   background: var(--primary);
@@ -281,6 +323,30 @@ textarea.input {
     transform: translateY(-12px);
   }
 }
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}
+@keyframes popIn {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 
 /* Mobile-first tweaks */
 @media (min-width: 660px) {
@@ -302,6 +368,9 @@ textarea.input {
     min-height: 560px;
   }
   .question-area {
+    margin-top: 16px;
+  }
+  .question-area {
     align-items: flex-start;
     justify-content: space-between;
   }
@@ -311,14 +380,20 @@ textarea.input {
   }
   .option-button {
     padding: 16px 14px;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 600;
   }
   .chips {
     gap: 12px;
   }
   .card h2 {
-    font-size: 24px;
+    font-size: 28px;
+  }
+  .small-note {
+    font-size: 16px;
+  }
+  .amharic {
+    font-size: 15px;
   }
   .question {
     max-width: 640px;

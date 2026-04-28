@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "./lib/supabaseClient";
 
-const suggestions = [
-  "Tomoca Coffee",
-  "Kaldi's",
-  "Local Juice House",
-  "Java House",
-];
-
 const questions = [
   {
     id: "year",
@@ -43,11 +36,11 @@ const questions = [
     q: "Where do you usually go? (Select all that apply)",
     am: "ብዙ ጊዜ የሚሄዱት የት ነው? (ከብዙ ምርጫ ይምረጡ)",
     options: [
-      "Cafés ☕",
-      "Restaurants 🍽",
-      "Juice houses 🥤",
-      "Shops 🛍",
-      "Entertainment 🎮",
+      "Cafes",
+      "Restaurants",
+      "Juice houses",
+      "Shops",
+      "Entertainment",
       "Other (please specify) — ሌላ (ይጻፉ)",
     ],
   },
@@ -66,14 +59,16 @@ const questions = [
       "Less than 50 birr",
       "50 – 100 birr",
       "100 – 200 birr",
-      "More than 200 birr",
+      "200 – 500 birr",
+      "500 – 1000 birr",
+      "1000+ birr",
     ],
   },
   {
     id: "feedback",
     type: "feedback",
-    q: "Do you have any ideas or suggestions to improve student life? (optional)",
-    am: "ለተማሪዎ ሕይወት ለማሻሻል ምንም ሃሳብ ወይም አስተያየት ካለዎት እባክዎን ይጻፉ።",
+    q: "Do you have any ideas or suggestions? (optional)",
+    am: "ምንም ሃሳብ ወይም አስተያየት ካለዎት እባክዎን ይጻፉ።",
     placeholder: "Your ideas or suggestions... — የእርስዎ ሃሳቦች ወይም አስተያየቶች...",
   },
 ];
@@ -150,12 +145,12 @@ export default function App() {
           </div>
           <div className="question-area">
             <div className="question enter">
-              <h2>Takes only 30 seconds ⏱</h2>
+              <h2>Takes only 30 seconds</h2>
               <div className="amharic">ብዙ ጊዜ አይወስድም — የ30 ሰከንድ ጥያቄዎች</div>
 
               <p className="small-note" style={{ marginTop: 10 }}>
                 This survey is anonymous and only used for general research.
-                Please answer based on your real experience. ✅
+                Please answer based on your real experience.
               </p>
               <div
                 className="amharic"
@@ -164,17 +159,16 @@ export default function App() {
                 ይህ መረጃ ስም ሳይጠየቅ ለጠቅላላ ጥናት ብቻ ይጠቀማል። እባክዎ በእውነተኛ ልምድዎ መሠረት ይመልሱ።
               </div>
 
-              <div className="small-note" style={{ marginTop: 12 }}>
-                Almost done 👀
-              </div>
-
               <button
                 className="btn primary"
-                style={{ marginTop: 16 }}
+                style={{ marginTop: 26 }}
                 onClick={() => setI(0)}
               >
-                Start Survey 🚀
+                Start
               </button>
+              <div className="small-note" style={{ marginTop: 12 }}>
+                Thanks for your help.
+              </div>
             </div>
           </div>
         </div>
@@ -185,23 +179,12 @@ export default function App() {
     return (
       <div className="app">
         <div className="card">
-          <div className="question enter">
-            <h2>🎉 You’re done! Thanks for helping improve student life.</h2>
-            <div className="amharic">
-              እስራሕ! አመሰግናለን — ለተማሪዎ ሕይወት ለማሻሻል ተማሪ ግምገማዎ ጠቃሚ ነው።
+          <div className="question enter done-screen">
+            <div className="done-icon-wrap">
+              <div className="done-icon">✓</div>
             </div>
-            <div style={{ marginTop: 10, fontWeight: 700 }}>
-              Thank you for your time. 🙏
-            </div>
-            <div className="amharic" style={{ marginTop: 4, color: "#56606a" }}>
-              ለጊዜዎ እናመሰግናለን። 🙏
-            </div>
-            <div className="small-note">
-              We use this data to bring better student discounts 👀
-            </div>
-            <pre style={{ marginTop: 12, fontSize: 13 }}>
-              {JSON.stringify(answers, null, 2)}
-            </pre>
+            <h2 className="done-title">Thank you for your time.</h2>
+            <div className="amharic">ለጊዜዎ እናመሰግናለን።</div>
           </div>
         </div>
       </div>
@@ -430,24 +413,10 @@ function BusinessInput({ onChoose, onSetFreq }) {
   const [custom, setCustom] = useState("");
   return (
     <div>
-      <div className="chips">
-        {suggestions.map((s) => (
-          <div
-            key={s}
-            className="chip"
-            onClick={() => {
-              setCustom("");
-              onChoose(s);
-            }}
-          >
-            {s}
-          </div>
-        ))}
-      </div>
       <div style={{ marginTop: 12 }}>
         <input
           className="input"
-          placeholder="e.g. Tomoca Coffee, Kaldi's, Local Juice House"
+          placeholder="e.g. Wubete Coffee, Ethio Coffee House, Fresh Juice Corner"
           value={custom}
           onChange={(e) => {
             setCustom(e.target.value);
